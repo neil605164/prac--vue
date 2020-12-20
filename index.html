@@ -1,18 +1,82 @@
 <head>
     <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="./style.css">
 </head>
 
 <body>
     <div id="app">
-        {{ message }}
+        <!-- v-if -->
+        <div v-if="text1">v-if 最後這段文字會顯示</div>
+        <div v-if="text2">v-if 最後這段文字不會顯示</div>
+
+        <!-- v-show -->
+        <div v-show="show1">v-show 最後這段文字會顯示</div>
+        <div v-show="show2">v-show 最後這段文字不會顯示</div>
+
+        <!-- v-for -->
+        <ul>
+            <li v-for="(person,index) in class001" :key="person.id">
+                第{{ index }}筆資料，姓名：{{ person.name }}，年齡：{{ person.age }}
+            </li>
+        </ul>
+    </div>
+
+    <div id="app2">
+        <input type="text" v-model="message">
+
+        <button type="button" v-on:click="handleOnClick">Click Me!</button>
+        <button type="button" @click="handleOnClick">Click Me!</button>
+    </div>
+
+    <div id="app3">
+        <div class="box" v-bind:class="{'rotate':isRotate}"></div>
+        <button type="button" @click="isRotate = !isRotate">Click Me in app3</button>
     </div>
     <script>
-        // 待會用來初始化 Vue 的地方
-        var vm = new Vue({
-            el:'#app',
-            data:{
-                message:'Hello, Vue.js!'
-            } 
+        let vm = new Vue({
+            el: '#app',
+            data: {
+                text1: true,
+                text2: false,
+                show1: true,
+                show2: false,
+                class001: [
+                    {
+                        id: '001',
+                        name: '王小明',
+                        age: 12,
+                    },
+                    {
+                        id: '002',
+                        name: '小美',
+                        age: 10,
+                    },
+                    {
+                        id: '003',
+                        name: '小華',
+                        age: 11,
+                    },
+                ]
+            }
+        })
+
+        let app2 = new Vue({
+            el: "#app2",
+            data: {
+                message: "我會顯示在 input 中"
+            },
+            methods: {
+                handleOnClick: function(){
+                    alert("Hello Vue")
+                }
+            }
+        })
+    
+        let app3 = new Vue({
+           el: "#app3",
+           data: {
+               isRotate: false
+           }
         })
     </script>
 <body>
