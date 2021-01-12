@@ -148,13 +148,27 @@
 
 <!-- 練習起始位置 -->
 <div id="app">
+  {{ text }}
+</div>
 
+<div id="app2">
+  {{ text }}
 </div>
 
 
 <script>
   var app = new Vue({
     el: "#app",
+    data: {
+      text: "這裡是一段話"
+    }
+  })
+
+  var app2 = new Vue({
+    el: "#app2",
+    data: {
+      text: "這裡是一段話 2"
+    }
   })
 // var data = {
 //   text: '這是一段話'
