@@ -159,32 +159,35 @@
     <div class="card-header">
       <ul class="nav nav-tabs card-header-tabs">
         <li class="nav-item">
-          <a class="nav-link" :class="{ active:visibility == 'all'}" @click="visibility = 'all'" href="#">全部</a>
+          <a class="nav-link" :class="{ active:visibility == 'all'}" @click.prevent="visibility = 'all'" href="#">全部</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " :class="{ active:visibility == 'doing'}" @click="visibility = 'doing'" href="#">進行中</a>
+          <a class="nav-link " :class="{ active:visibility == 'doing'}" @click.prevent="visibility = 'doing'" href="#">進行中</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" :class="{ active:visibility == 'done'}" @click="visibility = 'done'" href="#">已完成</a>
+          <a class="nav-link" :class="{ active:visibility == 'done'}" @click.prevent="visibility = 'done'" href="#">已完成</a>
         </li>
       </ul>
     </div>
     <ul class="list-group list-group-flush text-left">
-      <li class="list-group-item" v-for="(item, index) in displayData" :key="index">
-        <div class="d-flex">
+      <li class="list-group-item" v-for="(item, index) in displayData" :key="index" @dblclick="cacheTask(item)">
+        <div class="d-flex" v-if="item.id != tmpData.id">
           <div class="form-check">
             <input type="checkbox" class="form-check-input" :id="item.id" v-model="item.finish">
             <label class="form-check-label" :class="{ completed : item.finish }" :for="item.id">
               {{ item.name }}
             </label>
           </div>
-          <button type="button" class="close ml-auto" aria-label="Close" @click="deleteItem(item.id)">
+          <button type="button" class="close ml-auto" aria-label="Close" @click="deleteTask(item.id)">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-      </li>
-      <li class="list-group-item">
-        <input type="text" class="form-control" v-model="text" @keyup.enter="addTask">
+        <input type="text"
+          v-if="item.id == tmpData.id"
+          @keyup.esc="cancleEdit"
+          @keyup.enter="editTask(item)"
+          @blur="cancleEdit"
+         class="form-control" v-model="tmpName" >
       </li>
     </ul>
     <div class="card-footer d-flex justify-content-between">
@@ -202,6 +205,8 @@ var app = new Vue({
     todoList: [],
     total: 0,
     visibility: "all",
+    tmpData: {},
+    tmpName: "",
   },
   methods: {
     // 新增任務
@@ -225,20 +230,39 @@ var app = new Vue({
       return
     },
     // 刪除單一任務
-    deleteItem: function(id) {
+    deleteTask: function(id) {
       list = this.todoList
 
-      // 防呆，檢查傳入內容跟清單內容是否相同
-      for (var key in list) {
-        if (list[key]["id"] == id) {
-          list.splice(key, 1);
-        }
-      }
+      // 檢查傳入內容跟清單內容是否相同
+      index = this.todoList.findIndex(function(item,key){
+        return item.id === id 
+      })
+
+      list.splice(index, 1);
       return
     },
     // 刪除全部任務
     deleteAll: function(){
       this.todoList = []
+      return
+    },
+    // 暫存任務，等待編輯
+    cacheTask: function(item){    
+      this.tmpData = item
+      this.tmpName = item.name
+      return
+    },
+    // 編輯任務
+    editTask: function(item){
+      item.name = this.tmpName
+      this.tmpData = {}
+      this.tmpName = ""
+      return
+    },
+    // 取消編輯
+    cancleEdit: function(){
+      this.tmpData = {}
+      this.tmpName = ""
       return
     },
   },
