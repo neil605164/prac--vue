@@ -150,7 +150,7 @@
     <div class="input-group-prepend">
       <span class="input-group-text" id="basic-addon1">待辦事項</span>
     </div>
-    <input type="text" class="form-control" placeholder="準備要做的任務" v-model="text" v-on:keyup.enter="addTask">
+    <input type="text" class="form-control" placeholder="準備要做的任務" v-model="text" @keyup.enter="addTask">
     <div class="input-group-append">
       <button class="btn btn-primary" type="button" @click="addTask">新增</button>
     </div>
@@ -159,36 +159,36 @@
     <div class="card-header">
       <ul class="nav nav-tabs card-header-tabs">
         <li class="nav-item">
-          <a class="nav-link active" href="#">全部</a>
+          <a class="nav-link" :class="{ active:visibility == 'all'}" @click="visibility = 'all'" href="#">全部</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link " href="#">進行中</a>
+          <a class="nav-link " :class="{ active:visibility == 'doing'}" @click="visibility = 'doing'" href="#">進行中</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link" href="#">已完成</a>
+          <a class="nav-link" :class="{ active:visibility == 'done'}" @click="visibility = 'done'" href="#">已完成</a>
         </li>
       </ul>
     </div>
     <ul class="list-group list-group-flush text-left">
-      <li class="list-group-item" v-for="(item, index) in todoList" :key="index">
+      <li class="list-group-item" v-for="(item, index) in displayData" :key="index">
         <div class="d-flex">
           <div class="form-check">
-            <input type="checkbox" class="form-check-input" id="a1" v-model="item.finish">
-            <label class="form-check-label" :class="{ completed : item.finish }" for="a1">
+            <input type="checkbox" class="form-check-input" :id="item.id" v-model="item.finish">
+            <label class="form-check-label" :class="{ completed : item.finish }" :for="item.id">
               {{ item.name }}
             </label>
           </div>
-          <button type="button" class="close ml-auto" aria-label="Close" @click="deleteItem(item.name)">
+          <button type="button" class="close ml-auto" aria-label="Close" @click="deleteItem(item.id)">
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
       </li>
       <li class="list-group-item">
-        <input type="text" class="form-control" v-model="text" v-on:keyup.enter="addTask">
+        <input type="text" class="form-control" v-model="text" @keyup.enter="addTask">
       </li>
     </ul>
     <div class="card-footer d-flex justify-content-between">
-      <span>還有 {{tatalData}} 筆任務未完成</span>
+      <span>還有 {{ total }} 筆任務未完成</span>
       <a href="#" @click="deleteAll">清除所有任務</a>
     </div>
   </div>
@@ -201,12 +201,22 @@ var app = new Vue({
     text: "",
     todoList: [],
     total: 0,
+    visibility: "all",
   },
   methods: {
     // 新增任務
     addTask: function(){
+      // 取使用者輸入內容，並且過濾前後空白
+      text = this.text.trim()
+
+      // 禁止空內容加入
+      if (text == "") {
+        return
+      }
+
       var task = {
-        name: this.text,
+        id: Math.floor(Date.now()),
+        name: text,
         finish: false,
       };
       
@@ -215,11 +225,12 @@ var app = new Vue({
       return
     },
     // 刪除單一任務
-    deleteItem: function(value) {
+    deleteItem: function(id) {
       list = this.todoList
 
+      // 防呆，檢查傳入內容跟清單內容是否相同
       for (var key in list) {
-        if (list[key]["name"] == value) {
+        if (list[key]["id"] == id) {
           list.splice(key, 1);
         }
       }
@@ -229,12 +240,38 @@ var app = new Vue({
     deleteAll: function(){
       this.todoList = []
       return
-    }
+    },
   },
   computed: {
-    // 顯示總筆數
-    tatalData: function(){
-      return this.todoList.length
+    // 顯示適當資料
+    displayData: function(){
+      // 宣告回傳資料
+      var list = []
+
+      if (this.visibility == "all") {
+        list = this.todoList
+        this.total = list.length
+      }
+
+      if (this.visibility == "doing") {
+        this.todoList.forEach(function(item) {
+          if (!item.finish) {
+            list.push(item)
+          }
+        });
+      }
+
+      if (this.visibility == "done") {
+        this.todoList.forEach(function (item){
+          if (item.finish) {
+            list.push(item)
+          }
+        });
+      }
+
+      // 設定當前總筆數
+      this.total = list.length
+      return list
     }
   }
 });
