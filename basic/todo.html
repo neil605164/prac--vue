@@ -8,7 +8,7 @@
     <link rel="stylesheet" href="/stylesheets/all.css">
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/solid.js" integrity="sha384-+Ga2s7YBbhOD6nie0DzrZpJes+b2K1xkpKxTFFcx59QmVPaSA8c7pycsNaFwUK6l" crossorigin="anonymous"></script>
     <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/regular.js" integrity="sha384-t7yHmUlwFrLxHXNLstawVRBMeSLcXTbQ5hsd0ifzwGtN7ZF7RZ8ppM7Ldinuoiif" crossorigin="anonymous"></script>
-    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>    <script src="/javascripts/vendor.js"></script>
+    <script defer src="https://use.fontawesome.com/releases/v5.0.8/js/fontawesome.js" integrity="sha384-7ox8Q2yzO/uWircfojVuCQOZl+ZZBg2D2J5nkpLqzH1HY0C1dHlTKIbpRz/LG23c" crossorigin="anonymous"></script>    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
 
   </head>
   
@@ -182,7 +182,7 @@
             <span aria-hidden="true">&times;</span>
           </button>
         </div>
-        <input type="text"
+        <input type="text" ref="content"
           v-if="item.id == tmpData.id"
           @keyup.esc="cancleEdit"
           @keyup.enter="editTask(item)"
@@ -247,9 +247,17 @@ var app = new Vue({
       return
     },
     // 暫存任務，等待編輯
-    cacheTask: function(item){    
+    cacheTask(item){    
       this.tmpData = item
       this.tmpName = item.name
+
+      // setTimeout 是非同步
+      setTimeout(() => {
+        if (!this.$refs.content) {
+         return
+        }
+        !this.$refs.content[0].focus()
+      },0)
       return
     },
     // 編輯任務
