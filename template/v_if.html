@@ -156,8 +156,8 @@
   </ul>
   <div class="content">
     <div v-if="link == 'a'">Ａ</div>
-    <div v-if="link == 'b'">Ｂ</div>
-    <div v-if="link == 'c'">Ｃ</div>
+    <div v-else-if="link == 'b'">Ｂ</div>
+    <div v-else-if="link == 'c'">Ｃ</div>
   </div>
   <hr>
   <h4>KEY</h4>
