@@ -264,13 +264,11 @@ var app = new Vue({
     editTask: function(item){
       item.name = this.tmpName
       this.tmpData = {}
-      this.tmpName = ""
       return
     },
     // 取消編輯
     cancleEdit: function(){
       this.tmpData = {}
-      this.tmpName = ""
       return
     },
   },
