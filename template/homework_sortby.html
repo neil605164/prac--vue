@@ -119,16 +119,22 @@
     <thead>
       <tr>
         <th>品名</th>
-        <th class="click">價格 
+        <th class="click" @click="sortPrice">價格 
           <!-- isReverse 為反轉 className -->
-          <span class="icon isReverse">
-            <i class=" fas fa-angle-up text-success"></i>
-          </span>
+          <template v-if="focusType === 'price'">
+            <span class="icon" v-html="iUp" v-if="isReverse"></span>
+            <span class="icon" v-html="iDown" v-if="!isReverse"></span>
+          </template>
         </th>
-        <th class="click">到期日 
+        <th class="click" @click="sortDate">到期日 
+          <!-- isReverse 為反轉 className -->
+          <template v-if="focusType === 'date'">
+            <span class="icon" v-html="iUp" v-if="isReverse"></span>
+            <span class="icon" v-html="iDown" v-if="!isReverse"></span>
+          </template>
         </th>
       </tr>
-      <tr v-for="item in data">
+      <tr v-for="item in filterData">
         <td>{{ item.name }}</td>
         <td>{{ item.price }}</td>
         <td>{{ item.expiryDate }}</td>
@@ -180,9 +186,69 @@ var app = new Vue({
         expiryDate: 200
       }
     ],
+    iUp: `<i class=" fas fa-angle-up text-success"></i>`,
+    iDown: `<i class=" fas fa-angle-down text-success"></i>`,
+    isReverse: false,
+    focusType: "",
+  },
+  methods: {
+    // 排序價格
+    sortPrice() {
+      var vm = this
+      vm.isReverse = !vm.isReverse
+      vm.focusType = "price"
+    },
+    // 排序日期
+    sortDate() {
+      var vm = this
+      vm.isReverse = !vm.isReverse
+      vm.focusType = "date"
+    },
   },
   // 請在此撰寫 JavaScript
-  computed: {}
+  computed: {
+    filterData() {
+      var vm = this 
+      
+      // 針對「價格」進行降冪排序
+      if (vm.isReverse && vm.focusType == "price"){
+        vm.data.sort(function(a,b){
+          a = a["price"]
+          b = b["price"]
+          return(a === b ? 0 : a > b ? 1 : -1)
+        })
+      }
+
+      // 針對「價格」進行升冪排序
+      if (!vm.isReverse && vm.focusType == "price"){
+        vm.data.sort(function(a,b){
+          a = a["price"]
+          b = b["price"]
+          return(a === b ? 0 : b > a ? 1 : -1)
+        })
+      }
+
+      // 針對「日期」進行降冪排序
+      if (vm.isReverse && vm.focusType == "date"){
+        vm.data.sort(function(a,b){
+          a = a["expiryDate"]
+          b = b["expiryDate"]
+          return(a === b ? 0 : a > b ? 1 : -1)
+        })
+      }
+
+      // 針對「日期」進行升冪排序
+      if (!vm.isReverse && vm.focusType == "date"){
+        vm.data.sort(function(a,b){
+          a = a["expiryDate"]
+          b = b["expiryDate"]
+          return(a === b ? 0 : b > a ? 1 : -1)
+        })
+      }
+
+      return this.data
+    },
+  }
 });
 </script>
 
