@@ -128,16 +128,36 @@
     <thead>
     </thead>
     <tbody>
-      <tr v-for="(item, key) in data" :item="item" :key="key">
+      <!-- <raw-component v-for="(item, key) in data" :person="item" :key="key"></raw-component> -->
+      <tr is="raw-component" v-for="(item, key) in data" :person="item" :key="key"></tr>
+      <!-- <tr v-for="(item, key) in data" :item="item" :key="key">
         <td>{{ item.name }}</td>
         <td>{{ item.cash }}</td>
         <td>{{ item.icash }}</td>
-      </tr>
+      </tr> -->
     </tbody>
   </table>
 </div>
 
+<script type="text/x-template" id="rawComponent">
+  <tr>
+    <td>{{ person.name }}</td>
+    <td>{{ person.cash }}</td>
+    <td>{{ person.icash }}</td>
+  </tr>
+</script>
+
 <script>
+// Vue.component("raw-component", {
+//   props: ['person'],
+//   template: "#rawComponent",
+// })
+
+var child = {
+  props: ['person'],
+  template: "#rawComponent",
+}
+
 var app = new Vue({
   el: '#app',
   data: {
@@ -163,6 +183,9 @@ var app = new Vue({
         icash: 100,
       },
     ]
+  },
+  components: {
+    "raw-component": child
   }
 });
 </script>
