@@ -275,6 +275,8 @@ var app = new Vue({
 
       // 沒在關注清單
       this.stared.push(SiteName)
+      // 寫進 localstorage
+      localStorage.setItem("stared", JSON.stringify(this.stared))
       return
     },
   },
