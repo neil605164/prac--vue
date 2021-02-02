@@ -129,49 +129,89 @@
 
 <div id="app">
   <select name="" id="" class="form-control mb-3" v-model="filter">
-    <option disabled value="">--- 請選擇城市 ---</option>
+    <option value="">--- 請選擇城市 ---</option>
     <option :value="item" v-for="(item, index) in location" :key="index">{{ item }}</option>
   </select>
   <div>
     <h4>關注城市</h4>
     <div class="card-columns">
-      <div class="card" :class="isChangeStyle(item)" v-for="(item, index) in stared" :key="item.SiteId">
-        <div class="card-header">{{ item["County"] }} - {{ item["SiteName"] }}
-          <a href="#" class="float-right" @click.prevent="removeStareCountry(item)"><i class="fas fa-star"></i></a>
-        </div>
-        <div class="card-body">
-          <ul class="list-unstyled">
-          <li>AQI 指數: {{ item["AQI"] }}</li>
-          <li>PM2.5: {{ item["PM2.5"] }}</li>
-          <li>說明: {{ item["Status"] }}</li>
-          </ul>
-          {{ item.PublishTime }}
-        </div>
-      </div>
+      <card-template v-for="(item, index) in staredList" :air="item" :stareList="stared" :key="item.SiteId" @stare-data="editStareCountry"></card-template>
     </div>
   </div>
   
   <hr>
   <div class="card-columns">
-    <div class="card " :class="isChangeStyle(item)" v-for="(item, index) in filterCountry" :key="item.SiteId">
-      <div class="card-header">{{ item["County"] }} - {{ item["SiteName"] }}
-        <a href="#" class="float-right" @click.prevent="addStareCountry(item)"><i class="far fa-star"></i></a>
-      </div>
-      <div class="card-body">
-        <ul class="list-unstyled">
-          <li>AQI 指數: {{ item["AQI"] }}</li>
-          <li>PM2.5: {{ item["PM2.5"] }}</li>
-          <li>說明: {{ item["Status"] }}</li>
-        </ul>
-        {{ item.PublishTime }}
-      </div>
-    </div>
+    <card-template v-for="(item, index) in filterCountry" :air="item" :starelist="stared" :key="item.SiteId" @stare-data="editStareCountry"></card-template>
   </div>
 </div>
+
+<script type="text/x-template" id="templateCard">
+  <div class="card" :class="cardStyle">
+    <div class="card-header">{{ air.County }} - {{ air.SiteName }}
+      <a href="#" class="float-right" @click.prevent="editStareList(air)"><i :class="stareIcon"></i></a>
+    </div>
+    <div class="card-body">
+      <ul class="list-unstyled">
+        <li>AQI 指數: {{ air["AQI"] }}</li>
+        <li>PM2.5: {{ air["PM2.5"] }}</li>
+        <li>說明: {{ air["Status"] }}</li>
+      </ul>
+      {{ air["PublishTime"] }}
+    </div>
+  </div>
+</script>
 
 <script>
 // API 來源
 // https://opendata.epa.gov.tw/Data/Contents/AQI/
+
+const child = {
+  props: {
+    air: {
+      type: Object,
+      default: function () {
+        return {}
+      },
+    },
+    starelist: {
+      type: Array,
+      default: function () {
+        return []
+      },
+    },
+  },
+  template: "#templateCard",
+  methods: {
+    // 編輯關注清單
+    editStareList(air) {
+      this.$emit("stare-data", air["SiteName"])
+      return
+    },
+  },
+  computed: {
+    // 模板樣式
+    cardStyle() {
+      switch (this.air.Status) {
+        case "普通":
+          return "status-aqi2"
+        case "對敏感族群不健康":
+          return "status-aqi3"
+        case "對所有族群不健康":
+          return "status-aqi4"
+        case "非常不健康":
+          return "status-aqi5"
+        case "危害":
+          return "status-aqi6"
+        default:
+          break;
+      }
+    },
+    // 辨識 icon 樣式
+    stareIcon() {
+      return this.starelist.indexOf(this.air["SiteName"]) === -1 ? "far fa-star" : "fas fa-star"
+    }
+  }
+}
 
 var app = new Vue({
   el: '#app',
@@ -213,8 +253,6 @@ var app = new Vue({
         // 存放陣列資料
         vm.data = response;
 
-        // 檢查錯誤 errorcode 
-
         // 有資料才整理
         response.forEach(element => {
           let res = vm.location.indexOf(element.County)
@@ -226,72 +264,50 @@ var app = new Vue({
         });
       });
     },
-    // 新增關注清單
-    addStareCountry(item) {
-      // 取 localstorage 資料
-      let stared = JSON.parse(localStorage.getItem("stared"));
-
-      if (stared != null) {
-        this.stared = stared
-        this.stared.push(item)
-
-        // 更新 storage 資料
-        localStorage.setItem("stared", JSON.stringify(this.stared))
+    // 編輯關注清單
+    editStareCountry(SiteName) {
+      // 有在關注清單內
+      if (this.stared.indexOf(SiteName) >= 0) {
+        // 刪除關注 list 資料
+        this.stared.splice(this.stared.indexOf(SiteName), 1)
         return
       }
 
-      this.stared.push(item)
-      localStorage.setItem("stared", JSON.stringify(this.stared))
-      
+      // 沒在關注清單
+      this.stared.push(SiteName)
       return
-    },
-    // 移除關注清單
-    removeStareCountry(item) {
-      // 刪除 array list 資料
-      res = this.stared.indexOf(item);
-      this.stared.splice(res, 1);
-
-      //  更新 storage 資料
-      localStorage.setItem("stared", JSON.stringify(this.stared))
-      return
-    },
-    isChangeStyle(item) {
-      switch (item.Status) {
-        case "普通":
-          return "status-aqi2"
-        case "對敏感族群不健康":
-          return "status-aqi3"
-        case "對所有族群不健康":
-          return "status-aqi4"
-        case "非常不健康":
-          return "status-aqi5"
-        case "危害":
-          return "status-aqi6"
-        default:
-          break;
-      }
-
-      return ""
     },
   },
   computed: {
     // 篩選縣市
     filterCountry(){
-      let vm = this
-      if (this.filter == "") {
-        return vm.data
+      
+      // 無啟用過濾功能
+      if (this.filter === "") {
+        // 排除關注清單資料
+        return this.data.filter(element => this.stared.indexOf(element.SiteName) === -1)
       }
 
-      let arr = []
-      this.data.forEach(element => {       
+      // 啟用過濾功能
+      let tmp = []
+      this.data.forEach(element => { 
+        // 緊列出相同城市的資料
         if (element.County === this.filter) {
-          arr.push(element)
+          tmp.push(element)
         }
       });
 
-      return arr
+      // 排除關注清單資料
+      return tmp.filter(element => this.stared.indexOf(element.SiteName) === -1)
+    },
+    // 最愛清單
+    staredList() {
+      return this.data.filter(element => this.stared.indexOf(element.SiteName) !== -1)
     },
   },
+  components: {
+    "card-template": child,
+  }
 });
 </script>
 <!-- 
