@@ -270,11 +270,11 @@ var app = new Vue({
       if (this.stared.indexOf(SiteName) >= 0) {
         // 刪除關注 list 資料
         this.stared.splice(this.stared.indexOf(SiteName), 1)
-        return
+      }else{
+        // 沒在關注清單
+        this.stared.push(SiteName)
       }
 
-      // 沒在關注清單
-      this.stared.push(SiteName)
       // 寫進 localstorage
       localStorage.setItem("stared", JSON.stringify(this.stared))
       return
