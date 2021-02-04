@@ -106,26 +106,30 @@
 <script>
 // #1
 // 修改 var -> let
-var mom = '老媽';
-(function () {
-  console.log(mom);
-})();
+// console.log(mom)
+// let mom = '老媽';
+// (function () {
+//   console.log(mom);
+// })();
 
 // #2
 // 修改 var -> let
 // function varMing () {
-//   var ming = '小明';
+//   let ming = '小明';
 //   if (true) {
-//     var ming = '杰哥';  
+//     let ming = '杰哥';  
+//     console.log(ming);
 //     // 這裡的 ming 依然是外層的小明，所以小明即將被取代
 //   }
 //   console.log(ming);  // '杰哥'
 // }
 
+// varMing()
+
 
 // #3
 // 修改 var -> let
-// for (var i = 0; i < 10; i++) {
+// for (let i = 0; i < 10; i++) {
 //   console.log(i);
 //   setTimeout(function () {
 //     console.log('這執行第' + i + '次');
@@ -135,6 +139,8 @@ var mom = '老媽';
 // #4
 // const
 // const ming = '鐵錚錚男子漢';
+// ming = "不是男子漢"
+
 
 // #5
 // const 與 物件
@@ -144,15 +150,22 @@ var mom = '老媽';
 //   sister: '小橙'
 // };
 // family.father = '爸爸';
+// family.mom = '媽媽';
+// console.log(family)
+// // 以下會錯誤
+// family = {}
 
 // #6
 // 額外問題，不使用 let，上述答案如何解答
-// for (var i = 0; i < 10; i++) {
-//   console.log(i);
-//   setTimeout(function () {
-//     console.log('這執行第' + i + '次');
-//   }, 10);
-// }
+for (var i = 0; i < 10; i++) {
+  console.log(i);
+  setTimeout(count(i), 10);
+}
+
+function count(i) {
+  console.log('這執行第' + i + '次');
+}
+
 </script> 
         </div>
       </div>
