@@ -163,10 +163,10 @@ const people = [
 // 1. 找到金額 = 500 的物件
 // 2. 找到 > 5000 的物件
 // console.log("=========")
-let found1 = people.find(element => element.money === 500)
-let found2 = people.find(element => element.money > 5000)
-console.log(found1)
-console.log(found2)
+// let found1 = people.find(element => element.money === 500)
+// let found2 = people.find(element => element.money > 5000)
+// console.log(found1)
+// console.log(found2)
 
 // every
 // 1. 所有物件是否都超過 10000 元
@@ -193,15 +193,18 @@ console.log(found2)
 
 // reduce
 // 去除掉老媽，請問剩下的人有多少錢？
-// console.log("=========")
-// function totalCount(prev, curr) {
-//   if (curr.name !== "老媽"){
-//     prev.money += curr.money
-//     return prev
-//   }
-//   return prev
-// }
-// console.log(people.reduce(totalCount).money)
+console.log("=========")
+function totalCount(prev, curr) {
+  console.log("prev",prev)
+  console.log("curr",curr)
+  console.log("=====")
+  if (curr.name !== "老媽"){
+    prev.money = prev.money + curr.money
+    return prev
+  }
+  return prev
+}
+console.log(people.reduce(totalCount).money)
 
 </script> 
         </div>
