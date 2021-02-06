@@ -127,25 +127,81 @@ const people = [
 
 // forEach 與 map
 // 將所有物件增加 icash 有多少金額的欄位
+// for(let i=0; i < people.length; i++){
+//   console.log(people[i])
+// }
+
+// console.log("=========")
+
+// foreach 寫法
+// people.forEach(element => {
+//   console.log(element)
+//   element.icash = element.money + 500
+//   console.log(element.icash)
+// });
+
+// console.log("=========")
+// map 列出清單寫法
+// people.map(element => {
+//   console.log(element)
+//   if (element.money > 2000){
+//     element.icash = element.money + 500
+//   }
+//   console.log(element.icash)
+
+//   return element.icash
+// })
 
 
 // filter
 // 挑出金額少於 5000 的物件
+// console.log("=========")
+// let res = people.filter(element => element.money < 5000)
+// res.map(element => console.log(element))
 
 // find
 // 1. 找到金額 = 500 的物件
 // 2. 找到 > 5000 的物件
+// console.log("=========")
+let found1 = people.find(element => element.money === 500)
+let found2 = people.find(element => element.money > 5000)
+console.log(found1)
+console.log(found2)
 
 // every
 // 1. 所有物件是否都超過 10000 元
 // 2. 是否所有物件超過 300 元
+// console.log("=========")
+// function isOverTake(element){
+//   return element.money > 10000
+// }
+// console.log(people.every(isOverTake))
+
+// function isOverTake2(element){
+//   return element.money > 300
+// }
+// console.log(people.every(isOverTake2))
 
 // some
 // 1. 是否有物件超過 10000 元
 // 2. 是否有物件持有金額少於 300元
+// console.log("=========")
+// let isLessThan10000 = (element) => element.money > 10000
+// console.log(people.some(isLessThan10000))
+// let isLessThan300 = (element) => element.money < 300
+// console.log(people.some(isLessThan300))
 
 // reduce
 // 去除掉老媽，請問剩下的人有多少錢？
+// console.log("=========")
+// function totalCount(prev, curr) {
+//   if (curr.name !== "老媽"){
+//     prev.money += curr.money
+//     return prev
+//   }
+//   return prev
+// }
+// console.log(people.reduce(totalCount).money)
 
 </script> 
         </div>

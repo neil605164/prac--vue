@@ -102,6 +102,7 @@
   </ol>
 </div>
 
+<div id="app"></div>
 
 <script>
 // #1 樣板字串
@@ -128,6 +129,16 @@ let originUl = '<ul>\
 </ul>';
 
 console.log(originString, originUl);
+
+let newStr = `我叫做${people[0].name}`
+let newUrl = `
+<ul>
+  ${people.map(person => `<li>我叫做${person.name}</li>`).join("") }
+</ul>
+`
+console.log(newStr)
+console.log(newUrl)
+$("#app").html(newUrl)
 
 </script> 
         </div>
