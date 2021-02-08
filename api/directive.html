@@ -97,7 +97,7 @@
 </div>
 
 <div id="app">
-  <input type="email" v-model="email" v-focus v-validator>
+  <input type="email" v-model="email" v-focus v-validator="{ className: 'form-control'}">
 </div>
 
 <script>
@@ -123,7 +123,20 @@ Vue.directive("validator", {
     el.className = "form-control is-valid"
   },
   bind: function(el, binding, vnode) {
-    el.className = "form-control"
+    console.log("bind =====> ",el, binding, vnode)
+    console.log(binding.value.className)
+    el.className = binding.value.className
+
+    // v-model (再不知道 v-model 為何時)
+    var vModel = vnode.data.directives.find(function(item){
+      return item.name = "model"
+    }).expression
+    console.log("model ===> ", vModel)
+    // v-model (已知道 v-model 為何時)
+    var value = vnode.context[vModel]
+    console.log("value ===> ",value)
+    // v-model value 取得
+
   }
 })
 
@@ -168,7 +181,7 @@ Vue.directive("validator", {
 var app = new Vue({
   el: '#app',
   data: {
-    email: 'aaa',
+    email: 'aaa@ddd.com',
   },
   mounted: function() {
     console.log('Vue init:', this)
